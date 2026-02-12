@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* BlockNote editor height */
+.bn-container {
+  height: 100%;
+}
+
+.bn-editor {
+  min-height: calc(100vh - 160px);
+}
+
+/* Ensure the mantine BlockNote wrapper fills available space */
+[data-mantine-color-scheme] .bn-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  web:
+    build: ./apps/web
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      AI_SERVICE_URL: http://ai:8000
+      YJS_WEBSOCKET_URL: ws://yjs:1234
+      DATABASE_URL: file:/data/notionflow.db
+      WEB_CALLBACK_URL: http://web:3000/api
+    volumes:
+      - db-data:/data
+      - upload-data:/app/uploads
+    depends_on:
+      - ai
+      - yjs
+    restart: unless-stopped
+    networks:
+      - notionflow-net
+
+  ai:
+    build: ./apps/ai
+    ports:
+      - "8000:8000"
+    environment:
+      WEB_CALLBACK_URL: http://web:3000/api
+      MODEL_CACHE_DIR: /models
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - model-data:/models
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - notionflow-net
+
+  yjs:
+    image: node:20-slim
+    command: npx y-websocket
+    ports:
+      - "1234:1234"
+    environment:
+      HOST: 0.0.0.0
+      PORT: "1234"
+    restart: unless-stopped
+    networks:
+      - notionflow-net
+
+volumes:
+  db-data:
+  upload-data:
+  model-data:
+
+networks:
+  notionflow-net:
