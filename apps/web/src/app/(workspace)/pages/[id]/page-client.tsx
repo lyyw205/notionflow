@@ -55,20 +55,10 @@ export function PageEditorClient({
     [searchParams]
   );
 
-  const handleEditorClick = useCallback(
-    (e: React.MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const anchor = target.closest("a");
-      if (!anchor) return;
-
-      const href = anchor.getAttribute("href");
-      if (href && href.startsWith("/pages/")) {
-        e.preventDefault();
-        e.stopPropagation();
-        const targetId = href.replace("/pages/", "").split("?")[0];
-        const trail = buildTrailParam(breadcrumbs, pageId, initialTitle);
-        router.push(`/pages/${targetId}?trail=${encodeURIComponent(trail)}`);
-      }
+  const handleNavigate = useCallback(
+    (targetId: string) => {
+      const trail = buildTrailParam(breadcrumbs, pageId, initialTitle);
+      router.push(`/pages/${targetId}?trail=${encodeURIComponent(trail)}`);
     },
     [router, breadcrumbs, pageId, initialTitle]
   );
@@ -81,8 +71,8 @@ export function PageEditorClient({
         breadcrumbs={breadcrumbs}
       />
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 overflow-hidden" onClick={handleEditorClick}>
-          <BlockEditor pageId={pageId} initialContent={initialContent} />
+        <div className="flex-1 overflow-hidden">
+          <BlockEditor pageId={pageId} initialContent={initialContent} onNavigate={handleNavigate} />
         </div>
         <AISidebar
           pageId={pageId}

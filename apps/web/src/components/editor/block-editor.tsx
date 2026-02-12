@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 interface BlockEditorProps {
   pageId: string;
   initialContent: string;
+  onNavigate?: (targetPageId: string) => void;
 }
 
 const EditorInner = dynamic(() => import("./block-editor-inner"), {
@@ -16,6 +17,6 @@ const EditorInner = dynamic(() => import("./block-editor-inner"), {
   ),
 });
 
-export function BlockEditor({ pageId, initialContent }: BlockEditorProps) {
-  return <EditorInner pageId={pageId} initialContent={initialContent} />;
+export function BlockEditor({ pageId, initialContent, onNavigate }: BlockEditorProps) {
+  return <EditorInner pageId={pageId} initialContent={initialContent} onNavigate={onNavigate} />;
 }

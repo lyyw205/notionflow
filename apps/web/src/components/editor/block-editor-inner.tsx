@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import {
@@ -15,6 +15,7 @@ import { PageLinkModal } from "./page-link-modal";
 interface BlockEditorInnerProps {
   pageId: string;
   initialContent: string;
+  onNavigate?: (targetPageId: string) => void;
 }
 
 function parseInitialContent(content: string) {
@@ -33,13 +34,34 @@ function parseInitialContent(content: string) {
 export default function BlockEditorInner({
   pageId,
   initialContent,
+  onNavigate,
 }: BlockEditorInnerProps) {
   const debounceSave = useDebounceSave(pageId);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const onNavigateRef = useRef(onNavigate);
+  onNavigateRef.current = onNavigate;
 
   const editor = useCreateBlockNote({
     initialContent: parseInitialContent(initialContent),
     resolveFileUrl: async (url) => url,
+    _tiptapOptions: {
+      editorProps: {
+        handleClick: (_view: any, _pos: number, event: MouseEvent) => {
+          const target = event.target as HTMLElement;
+          const anchor = target.closest("a");
+          if (!anchor) return false;
+
+          const href = anchor.getAttribute("href");
+          if (href && href.startsWith("/pages/")) {
+            event.preventDefault();
+            const targetId = href.replace("/pages/", "").split("?")[0];
+            onNavigateRef.current?.(targetId);
+            return true;
+          }
+          return false;
+        },
+      },
+    },
   });
 
   function handleChange() {
