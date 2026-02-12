@@ -23,8 +23,13 @@ export async function middleware(req: NextRequest) {
 
   if (!token) {
     const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
+    loginUrl.searchParams.set("callbackUrl", pathname === "/" ? "/dashboard" : pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Redirect root to dashboard
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   return NextResponse.next();
