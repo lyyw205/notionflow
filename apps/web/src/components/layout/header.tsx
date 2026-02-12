@@ -1,14 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useCallback } from "react";
+
+interface BreadcrumbItem {
+  id: string;
+  title: string;
+}
 
 interface HeaderProps {
   pageTitle?: string;
   pageId?: string;
+  breadcrumbs?: BreadcrumbItem[];
 }
 
-export function Header({ pageTitle, pageId }: HeaderProps) {
+export function Header({ pageTitle, pageId, breadcrumbs }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [title, setTitle] = useState(pageTitle || "");
@@ -46,7 +53,7 @@ export function Header({ pageTitle, pageId }: HeaderProps) {
     }
     try {
       const res = await fetch(
-        `/api/pages/search?q=${encodeURIComponent(query)}`
+        `/api/search?q=${encodeURIComponent(query)}`
       );
       if (res.ok) {
         const data = await res.json();
@@ -66,17 +73,41 @@ export function Header({ pageTitle, pageId }: HeaderProps) {
   }
 
   const displayTitle = getPageDisplayTitle();
+  const hasBreadcrumbs = breadcrumbs && breadcrumbs.length > 0;
 
   return (
     <header className="flex h-14 items-center gap-4 border-b border-gray-200 bg-white px-6">
-      {/* Page title */}
-      <div className="flex-1">
+      {/* Breadcrumb + Page title */}
+      <div className="flex min-w-0 flex-1 items-center gap-1">
+        {isPageRoute && hasBreadcrumbs && (
+          <div className="flex items-center gap-1 text-sm">
+            {breadcrumbs.map((crumb, i) => {
+              const trailUpTo = breadcrumbs
+                .slice(0, i)
+                .map((b) => `${b.id}:${b.title}`)
+                .join(",");
+              const href = `/pages/${crumb.id}${trailUpTo ? `?trail=${encodeURIComponent(trailUpTo)}` : ""}`;
+              return (
+                <span key={crumb.id} className="flex items-center gap-1">
+                  <Link
+                    href={href}
+                    className="max-w-[160px] truncate text-gray-500 hover:text-brand-600 hover:underline"
+                  >
+                    {crumb.title || "Untitled"}
+                  </Link>
+                  <span className="text-gray-300">/</span>
+                </span>
+              );
+            })}
+          </div>
+        )}
+
         {isPageRoute ? (
           <input
             type="text"
             value={title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="w-full max-w-md border-none bg-transparent text-lg font-semibold text-gray-900 outline-none placeholder-gray-400 focus:ring-0"
+            className="min-w-0 flex-1 border-none bg-transparent text-lg font-semibold text-gray-900 outline-none placeholder-gray-400 focus:ring-0"
             placeholder="Untitled"
           />
         ) : (
