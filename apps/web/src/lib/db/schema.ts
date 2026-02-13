@@ -18,6 +18,39 @@ export const categories = sqliteTable("categories", {
   createdAt: integer("created_at").notNull(),
 });
 
+export const projects = sqliteTable("projects", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  status: text("status").notNull().default("planned"),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => users.id),
+  startDate: integer("start_date"),
+  endDate: integer("end_date"),
+  aiSummary: text("ai_summary"),
+  progress: integer("progress").notNull().default(0),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const milestones = sqliteTable("milestones", {
+  id: text("id").primaryKey(),
+  projectId: text("project_id")
+    .notNull()
+    .references(() => projects.id),
+  title: text("title").notNull(),
+  description: text("description"),
+  status: text("status").notNull().default("pending"),
+  startDate: integer("start_date"),
+  endDate: integer("end_date"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  aiProgress: integer("ai_progress").notNull().default(0),
+  aiSummary: text("ai_summary"),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
 export const pages = sqliteTable("pages", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
@@ -28,6 +61,8 @@ export const pages = sqliteTable("pages", {
   authorId: text("author_id")
     .notNull()
     .references(() => users.id),
+  projectId: text("project_id").references(() => projects.id),
+  milestoneId: text("milestone_id").references(() => milestones.id),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
 });
@@ -98,9 +133,24 @@ export const files = sqliteTable("files", {
 export const usersRelations = relations(users, ({ many }) => ({
   pages: many(pages),
   files: many(files),
+  projects: many(projects),
 }));
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
+  pages: many(pages),
+}));
+
+export const projectsRelations = relations(projects, ({ one, many }) => ({
+  owner: one(users, { fields: [projects.ownerId], references: [users.id] }),
+  milestones: many(milestones),
+  pages: many(pages),
+}));
+
+export const milestonesRelations = relations(milestones, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [milestones.projectId],
+    references: [projects.id],
+  }),
   pages: many(pages),
 }));
 
@@ -110,6 +160,14 @@ export const pagesRelations = relations(pages, ({ one, many }) => ({
     fields: [pages.categoryId],
     references: [categories.id],
   }),
+  project: one(projects, {
+    fields: [pages.projectId],
+    references: [projects.id],
+  }),
+  milestone: one(milestones, {
+    fields: [pages.milestoneId],
+    references: [milestones.id],
+  }),
   versions: many(pageVersions),
   pageTags: many(pageTags),
   embedding: one(embeddings, {
@@ -117,6 +175,7 @@ export const pagesRelations = relations(pages, ({ one, many }) => ({
     references: [embeddings.pageId],
   }),
   files: many(files),
+  databases: many(databases),
 }));
 
 export const pageVersionsRelations = relations(pageVersions, ({ one }) => ({
@@ -145,4 +204,88 @@ export const embeddingsRelations = relations(embeddings, ({ one }) => ({
 export const filesRelations = relations(files, ({ one }) => ({
   page: one(pages, { fields: [files.pageId], references: [pages.id] }),
   uploader: one(users, { fields: [files.uploadedBy], references: [users.id] }),
+}));
+
+// === Database (inline database) tables ===
+
+export const databases = sqliteTable("databases", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  pageId: text("page_id")
+    .notNull()
+    .references(() => pages.id),
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const databaseProperties = sqliteTable("database_properties", {
+  id: text("id").primaryKey(),
+  databaseId: text("database_id")
+    .notNull()
+    .references(() => databases.id),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // text|number|select|multi_select|date|checkbox|url|email|phone|person|relation|formula
+  config: text("config"), // JSON
+  sortOrder: integer("sort_order").notNull().default(0),
+  isTitle: integer("is_title").notNull().default(0),
+  createdAt: integer("created_at").notNull(),
+});
+
+export const databaseRecords = sqliteTable("database_records", {
+  id: text("id").primaryKey(),
+  databaseId: text("database_id")
+    .notNull()
+    .references(() => databases.id),
+  values: text("values").notNull().default("{}"), // JSON: { propertyId: value }
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const databaseViews = sqliteTable("database_views", {
+  id: text("id").primaryKey(),
+  databaseId: text("database_id")
+    .notNull()
+    .references(() => databases.id),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // table|board|timeline|calendar|list|gallery|chart|feed|map
+  config: text("config"), // JSON
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+// Database relations
+
+export const databasesRelations = relations(databases, ({ one, many }) => ({
+  page: one(pages, { fields: [databases.pageId], references: [pages.id] }),
+  creator: one(users, { fields: [databases.createdBy], references: [users.id] }),
+  properties: many(databaseProperties),
+  records: many(databaseRecords),
+  views: many(databaseViews),
+}));
+
+export const databasePropertiesRelations = relations(databaseProperties, ({ one }) => ({
+  database: one(databases, {
+    fields: [databaseProperties.databaseId],
+    references: [databases.id],
+  }),
+}));
+
+export const databaseRecordsRelations = relations(databaseRecords, ({ one }) => ({
+  database: one(databases, {
+    fields: [databaseRecords.databaseId],
+    references: [databases.id],
+  }),
+}));
+
+export const databaseViewsRelations = relations(databaseViews, ({ one }) => ({
+  database: one(databases, {
+    fields: [databaseViews.databaseId],
+    references: [databases.id],
+  }),
 }));

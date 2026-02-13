@@ -4,16 +4,32 @@ import { useState, useCallback, useRef } from "react";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import {
+  BlockNoteSchema,
+  defaultBlockSpecs,
+} from "@blocknote/core";
+import {
   getDefaultSlashMenuItems,
   filterSuggestionItems,
+  insertOrUpdateBlockForSlashMenu,
 } from "@blocknote/core/extensions";
 import { SuggestionMenuController } from "@blocknote/react";
 import "@blocknote/mantine/style.css";
 import { useDebounceSave } from "@/hooks/use-debounce-save";
 import { PageLinkModal } from "./page-link-modal";
+import { DatabaseBlockComponent } from "./database-block/database-block-component";
+
+const databaseBlockSpec = DatabaseBlockComponent();
+
+const schema = BlockNoteSchema.create({
+  blockSpecs: {
+    ...defaultBlockSpecs,
+    database: databaseBlockSpec,
+  },
+});
 
 interface BlockEditorInnerProps {
   pageId: string;
+  userId?: string;
   initialContent: string;
   onNavigate?: (targetPageId: string) => void;
 }
@@ -33,6 +49,7 @@ function parseInitialContent(content: string) {
 
 export default function BlockEditorInner({
   pageId,
+  userId,
   initialContent,
   onNavigate,
 }: BlockEditorInnerProps) {
@@ -42,6 +59,7 @@ export default function BlockEditorInner({
   onNavigateRef.current = onNavigate;
 
   const editor = useCreateBlockNote({
+    schema,
     initialContent: parseInitialContent(initialContent),
     resolveFileUrl: async (url) => url,
     _tiptapOptions: {
@@ -95,6 +113,7 @@ export default function BlockEditorInner({
       const defaultItems = getDefaultSlashMenuItems(editor);
 
       const pageLinkItem = {
+        key: "page_link",
         title: "Page Link",
         subtext: "Link to another page",
         group: "Other",
@@ -103,14 +122,44 @@ export default function BlockEditorInner({
         },
         aliases: ["page", "link", "페이지", "링크"],
         badge: undefined,
-      } as (typeof defaultItems)[number];
+      } as any;
+
+      const databaseItem = {
+        key: "database",
+        title: "Database",
+        subtext: "Insert an inline database",
+        group: "Other",
+        onItemClick: async () => {
+          try {
+            const res = await fetch("/api/databases", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                pageId,
+                createdBy: userId || "unknown",
+              }),
+            });
+            if (!res.ok) throw new Error("Failed to create database");
+            const db = await res.json();
+
+            insertOrUpdateBlockForSlashMenu(editor, {
+              type: "database",
+              props: { databaseId: db.id },
+            } as any);
+          } catch (err) {
+            console.error("Failed to create database:", err);
+          }
+        },
+        aliases: ["database", "db", "table", "데이터베이스", "표"],
+        badge: undefined,
+      } as any;
 
       return filterSuggestionItems(
-        [...defaultItems, pageLinkItem],
+        [...defaultItems, pageLinkItem, databaseItem],
         query
       );
     },
-    [editor]
+    [editor, pageId, userId]
   );
 
   return (

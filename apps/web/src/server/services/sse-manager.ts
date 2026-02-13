@@ -19,13 +19,13 @@ class SSEManager {
     const encoder = new TextEncoder();
     const encoded = encoder.encode(message);
 
-    for (const client of this.clients) {
+    Array.from(this.clients).forEach((client) => {
       try {
         client.controller.enqueue(encoded);
       } catch {
         this.clients.delete(client);
       }
-    }
+    });
   }
 
   getClientCount() {

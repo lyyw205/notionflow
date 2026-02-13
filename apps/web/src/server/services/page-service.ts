@@ -5,9 +5,12 @@ import {
   pageTags,
   tags,
   categories,
+  projects,
+  milestones,
 } from "@/lib/db/schema";
 import { eq, desc, like } from "drizzle-orm";
 import { randomUUID } from "crypto";
+import { deleteDatabasesByPageId } from "./database-service";
 
 interface BlockNoteBlock {
   type?: string;
@@ -53,6 +56,8 @@ export async function createPage(params: {
   content: string;
   authorId: string;
   categoryId?: string;
+  projectId?: string;
+  milestoneId?: string;
 }) {
   const now = Math.floor(Date.now() / 1000);
   const id = randomUUID();
@@ -65,6 +70,8 @@ export async function createPage(params: {
       content: params.content,
       plainText,
       categoryId: params.categoryId || null,
+      projectId: params.projectId || null,
+      milestoneId: params.milestoneId || null,
       authorId: params.authorId,
       createdAt: now,
       updatedAt: now,
@@ -91,6 +98,8 @@ export async function updatePage(
     title?: string;
     content?: string;
     categoryId?: string | null;
+    projectId?: string | null;
+    milestoneId?: string | null;
   }
 ) {
   const existing = db.select().from(pages).where(eq(pages.id, id)).get();
@@ -111,6 +120,14 @@ export async function updatePage(
         params.categoryId !== undefined
           ? params.categoryId
           : existing.categoryId,
+      projectId:
+        params.projectId !== undefined
+          ? params.projectId
+          : existing.projectId,
+      milestoneId:
+        params.milestoneId !== undefined
+          ? params.milestoneId
+          : existing.milestoneId,
       updatedAt: now,
     })
     .where(eq(pages.id, id))
@@ -144,6 +161,9 @@ export async function deletePage(id: string) {
   const existing = db.select().from(pages).where(eq(pages.id, id)).get();
   if (!existing) return false;
 
+  // Delete related databases (cascade)
+  await deleteDatabasesByPageId(id);
+
   // Delete related records
   db.delete(pageTags).where(eq(pageTags.pageId, id)).run();
   db.delete(pageVersions).where(eq(pageVersions.pageId, id)).run();
@@ -164,6 +184,22 @@ export async function getPage(id: string) {
         .get()
     : null;
 
+  const project = page.projectId
+    ? db
+        .select()
+        .from(projects)
+        .where(eq(projects.id, page.projectId))
+        .get()
+    : null;
+
+  const milestone = page.milestoneId
+    ? db
+        .select()
+        .from(milestones)
+        .where(eq(milestones.id, page.milestoneId))
+        .get()
+    : null;
+
   const pageTagRows = db
     .select()
     .from(pageTags)
@@ -174,6 +210,8 @@ export async function getPage(id: string) {
   return {
     ...page,
     category: category ? { id: category.id, name: category.name } : null,
+    project: project ? { id: project.id, name: project.name } : null,
+    milestone: milestone ? { id: milestone.id, title: milestone.title } : null,
     tags: pageTagRows.map((row) => ({
       id: row.tags.id,
       name: row.tags.name,

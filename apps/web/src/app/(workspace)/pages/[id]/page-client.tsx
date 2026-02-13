@@ -5,14 +5,18 @@ import { useCallback, useMemo } from "react";
 import { Header } from "@/components/layout/header";
 import { BlockEditor } from "@/components/editor/block-editor";
 import { AISidebar } from "@/components/editor/ai-sidebar";
+import { ProjectSelector } from "@/components/editor/project-selector";
 
 interface PageEditorClientProps {
   pageId: string;
+  userId?: string;
   initialTitle: string;
   initialContent: string;
   initialSummary: string;
   initialTags: { id: string; name: string; confidence: number }[];
   initialCategory: { id: string; name: string } | null;
+  initialProject: { id: string; name: string } | null;
+  initialMilestone: { id: string; title: string } | null;
 }
 
 function parseTrail(raw: string | null): { id: string; title: string }[] {
@@ -41,11 +45,14 @@ function buildTrailParam(
 
 export function PageEditorClient({
   pageId,
+  userId,
   initialTitle,
   initialContent,
   initialSummary,
   initialTags,
   initialCategory,
+  initialProject,
+  initialMilestone,
 }: PageEditorClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -70,9 +77,14 @@ export function PageEditorClient({
         pageId={pageId}
         breadcrumbs={breadcrumbs}
       />
+      <ProjectSelector
+        pageId={pageId}
+        initialProject={initialProject}
+        initialMilestone={initialMilestone}
+      />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-hidden">
-          <BlockEditor pageId={pageId} initialContent={initialContent} onNavigate={handleNavigate} />
+          <BlockEditor pageId={pageId} userId={userId} initialContent={initialContent} onNavigate={handleNavigate} />
         </div>
         <AISidebar
           pageId={pageId}
