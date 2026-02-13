@@ -63,7 +63,6 @@ export function Sidebar() {
         body: JSON.stringify({
           title: "Untitled",
           content: "[]",
-          authorId: session?.user?.id ?? "unknown",
         }),
       });
       if (res.ok) {

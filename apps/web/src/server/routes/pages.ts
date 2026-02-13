@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { z } from "zod";
+import { getToken } from "next-auth/jwt";
 import {
   createPage,
   updatePage,
@@ -9,12 +10,13 @@ import {
 } from "../services/page-service";
 import { triggerAIProcessing, triggerProjectAnalysis } from "../services/ai-trigger";
 
+const AUTH_SECRET = process.env.AUTH_SECRET || "notionflow-dev-secret-change-in-production";
+
 const app = new Hono();
 
 const createPageSchema = z.object({
   title: z.string().min(1),
   content: z.string(),
-  authorId: z.string().uuid(),
   categoryId: z.string().uuid().optional(),
   projectId: z.string().uuid().optional(),
   milestoneId: z.string().uuid().optional(),
@@ -44,13 +46,18 @@ app.get("/:id", async (c) => {
 });
 
 app.post("/", async (c) => {
+  const token = await getToken({ req: c.req.raw as any, secret: AUTH_SECRET });
+  if (!token?.id) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
   const body = await c.req.json();
   const parsed = createPageSchema.safeParse(body);
   if (!parsed.success) {
     return c.json({ error: parsed.error.flatten() }, 400);
   }
 
-  const page = await createPage(parsed.data);
+  const page = await createPage({ ...parsed.data, authorId: token.id as string });
   return c.json(page, 201);
 });
 
