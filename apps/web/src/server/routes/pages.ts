@@ -7,7 +7,7 @@ import {
   getPage,
   listPages,
 } from "../services/page-service";
-import { triggerAIProcessing } from "../services/ai-trigger";
+import { triggerAIProcessing, triggerProjectAnalysis } from "../services/ai-trigger";
 
 const app = new Hono();
 
@@ -16,12 +16,16 @@ const createPageSchema = z.object({
   content: z.string(),
   authorId: z.string().uuid(),
   categoryId: z.string().uuid().optional(),
+  projectId: z.string().uuid().optional(),
+  milestoneId: z.string().uuid().optional(),
 });
 
 const updatePageSchema = z.object({
   title: z.string().min(1).optional(),
   content: z.string().optional(),
   categoryId: z.string().uuid().nullable().optional(),
+  projectId: z.string().uuid().nullable().optional(),
+  milestoneId: z.string().uuid().nullable().optional(),
 });
 
 app.get("/", async (c) => {
@@ -66,6 +70,11 @@ app.put("/:id", async (c) => {
   // Trigger AI processing asynchronously
   if (parsed.data.content && result.plainText) {
     triggerAIProcessing(id, result.plainText);
+  }
+
+  // Trigger project analysis if page belongs to a project
+  if (result.projectId) {
+    triggerProjectAnalysis(result.projectId);
   }
 
   return c.json(result);

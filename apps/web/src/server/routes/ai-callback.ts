@@ -7,10 +7,13 @@ import {
   pageTags,
   embeddings,
   categories,
+  projects,
+  milestones,
 } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { sseManager } from "../services/sse-manager";
+import { triggerProjectAnalysis } from "../services/ai-trigger";
 
 const app = new Hono();
 
@@ -140,6 +143,58 @@ app.post("/callback", async (c) => {
     tags: tagData,
     clusterId,
   });
+
+  // Trigger project analysis if page belongs to a project
+  const updatedPage = db.select().from(pages).where(eq(pages.id, pageId)).get();
+  if (updatedPage?.projectId) {
+    triggerProjectAnalysis(updatedPage.projectId);
+  }
+
+  return c.json({ success: true });
+});
+
+const projectCallbackSchema = z.object({
+  projectId: z.string(),
+  overallProgress: z.number(),
+  aiSummary: z.string(),
+  milestoneUpdates: z.array(
+    z.object({
+      milestoneId: z.string(),
+      aiProgress: z.number(),
+      aiSummary: z.string(),
+    })
+  ),
+});
+
+app.post("/project-callback", async (c) => {
+  const body = await c.req.json();
+  const parsed = projectCallbackSchema.safeParse(body);
+  if (!parsed.success) {
+    return c.json({ error: parsed.error.flatten() }, 400);
+  }
+
+  const { projectId, overallProgress, aiSummary, milestoneUpdates } =
+    parsed.data;
+
+  const now = Math.floor(Date.now() / 1000);
+
+  db.update(projects)
+    .set({ progress: overallProgress, aiSummary, updatedAt: now })
+    .where(eq(projects.id, projectId))
+    .run();
+
+  for (const mu of milestoneUpdates) {
+    db.update(milestones)
+      .set({
+        aiProgress: mu.aiProgress,
+        aiSummary: mu.aiSummary,
+        updatedAt: now,
+      })
+      .where(eq(milestones.id, mu.milestoneId))
+      .run();
+  }
+
+  sseManager.broadcast("project-updated", { projectId });
 
   return c.json({ success: true });
 });

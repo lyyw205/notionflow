@@ -129,6 +129,17 @@ export function Sidebar() {
           Dashboard
         </Link>
         <Link
+          href="/projects"
+          className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm ${
+            isActive("/projects")
+              ? "bg-brand-50 font-medium text-brand-700"
+              : "text-gray-600 hover:bg-gray-100"
+          }`}
+        >
+          <span className="w-5 text-center">&#9654;</span>
+          Projects
+        </Link>
+        <Link
           href="/reports"
           className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm ${
             isActive("/reports")

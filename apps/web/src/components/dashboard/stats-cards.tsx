@@ -6,6 +6,7 @@ interface StatsCardsProps {
     totalTags: number;
     totalCategories: number;
     todayEdits: number;
+    activeProjects: number;
   };
 }
 
@@ -14,11 +15,12 @@ const cards = [
   { key: "totalTags" as const, label: "Total Tags", icon: "\uD83C\uDFF7\uFE0F" },
   { key: "totalCategories" as const, label: "Categories", icon: "\uD83D\uDCC1" },
   { key: "todayEdits" as const, label: "Today's Edits", icon: "\u270F\uFE0F" },
+  { key: "activeProjects" as const, label: "Active Projects", icon: "\uD83D\uDCC8" },
 ];
 
 export function StatsCards({ stats }: StatsCardsProps) {
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-5 gap-4">
       {cards.map((card) => (
         <div
           key={card.key}

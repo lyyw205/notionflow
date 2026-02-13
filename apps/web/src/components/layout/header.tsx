@@ -69,6 +69,8 @@ export function Header({ pageTitle, pageId, breadcrumbs }: HeaderProps) {
     if (pathname === "/dashboard") return "Dashboard";
     if (pathname === "/reports") return "Reports";
     if (pathname.startsWith("/reports/")) return "Report Detail";
+    if (pathname === "/projects") return "Projects";
+    if (pathname.startsWith("/projects/")) return "Project Detail";
     return "NotionFlow";
   }
 

@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 from src.jobs.scheduler import start_scheduler
-from src.routers import cluster, embed, process, report, summarize, tag
+from src.routers import cluster, embed, process, project, report, summarize, tag
 from src.services.callback import CallbackService
 from src.services.clustering import ClusteringService
 
@@ -66,6 +66,7 @@ app.include_router(tag.router)
 app.include_router(summarize.router)
 app.include_router(cluster.router)
 app.include_router(report.router)
+app.include_router(project.router)
 
 
 @app.get("/")

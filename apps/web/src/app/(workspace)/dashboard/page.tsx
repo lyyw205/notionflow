@@ -24,6 +24,7 @@ interface DashboardData {
     totalTags: number;
     totalCategories: number;
     todayEdits: number;
+    activeProjects: number;
   };
   recentPages: {
     id: string;
@@ -42,7 +43,7 @@ interface DashboardData {
 }
 
 const defaultData: DashboardData = {
-  stats: { totalPages: 0, totalTags: 0, totalCategories: 0, todayEdits: 0 },
+  stats: { totalPages: 0, totalTags: 0, totalCategories: 0, todayEdits: 0, activeProjects: 0 },
   recentPages: [],
   categories: [],
   uncategorizedPages: [],
@@ -90,6 +91,7 @@ function buildDashboard(apiPages: PageFromAPI[]): DashboardData {
       totalTags: tagCountMap.size,
       totalCategories: categoryMap.size,
       todayEdits: apiPages.filter((p) => p.updatedAt >= todayStart).length,
+      activeProjects: 0,
     },
     recentPages: apiPages.slice(0, 10).map((p) => ({
       id: p.id,
@@ -117,7 +119,17 @@ export default function DashboardPage() {
       if (res.ok) {
         const json = await res.json();
         const pages: PageFromAPI[] = Array.isArray(json) ? json : json.pages ?? [];
-        setData(buildDashboard(pages));
+        const dashboardData = buildDashboard(pages);
+
+        const projRes = await fetch("/api/projects");
+        if (projRes.ok) {
+          const projData = await projRes.json();
+          const projList = Array.isArray(projData) ? projData : projData.projects ?? [];
+          const activeCount = projList.filter((p: any) => p.status === "active").length;
+          dashboardData.stats.activeProjects = activeCount;
+        }
+
+        setData(dashboardData);
       }
     } catch {
       // Ignore
