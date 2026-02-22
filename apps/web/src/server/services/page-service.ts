@@ -154,7 +154,7 @@ export async function updatePage(
     })
     .run();
 
-  return { ...(await getPage(id)), plainText };
+  return { ...(await getPage(id)), plainText, previousPlainText: existing.plainText };
 }
 
 export async function deletePage(id: string) {

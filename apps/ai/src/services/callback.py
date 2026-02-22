@@ -3,6 +3,8 @@ from typing import Any
 
 import httpx
 
+from src.models.schemas import AIProcessingResult
+
 logger = logging.getLogger(__name__)
 
 TIMEOUT = httpx.Timeout(30.0, connect=10.0)
@@ -37,18 +39,38 @@ class CallbackService:
     async def send_ai_results(
         self,
         callback_url: str,
-        page_id: str,
-        tags: list[dict],
-        summary: str,
-        embedding: list[float],
-        cluster_id: int | None = None,
+        result: AIProcessingResult,
     ) -> bool:
+        # Convert Pydantic model to camelCase payload for the web callback
         payload = {
-            "page_id": page_id,
-            "tags": tags,
-            "summary": summary,
-            "embedding": embedding,
-            "cluster_id": cluster_id,
+            "pageId": result.page_id,
+            "noteType": result.note_type,
+            "tags": [{"name": t.name, "score": t.score} for t in result.tags],
+            "summary": result.summary,
+            "embedding": result.embedding,
+            "clusterId": result.cluster_id,
+            "entities": [
+                {"type": e.type, "value": e.value, "metadata": e.metadata}
+                for e in result.entities
+            ],
+            "todos": [
+                {
+                    "title": t.title,
+                    "priority": t.priority,
+                    "dueDate": t.due_date,
+                    "assignee": t.assignee,
+                }
+                for t in result.todos
+            ],
+            "confidence": result.confidence,
+            "statusSignals": [
+                {
+                    "signal": s.signal,
+                    "keyword": s.keyword,
+                    "context": s.context,
+                }
+                for s in result.status_signals
+            ],
         }
         return await self._post(callback_url, payload)
 

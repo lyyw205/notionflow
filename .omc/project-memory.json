@@ -1,0 +1,361 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1771677267971,
+  "projectRoot": "/home/youngwoo/repos/notionflow",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": ">=20",
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "pnpm",
+    "runtime": "Node.js 20"
+  },
+  "build": {
+    "buildCommand": "pnpm build",
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": "pnpm dev",
+    "scripts": {
+      "dev": "pnpm --filter web dev",
+      "build": "pnpm --filter web build",
+      "db:generate": "pnpm --filter web db:generate",
+      "db:migrate": "pnpm --filter web db:migrate",
+      "db:seed": "pnpm --filter web db:seed"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": true,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "apps": {
+      "path": "apps",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1771677267930,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "apps/web/src/lib/db/schema.ts",
+      "accessCount": 13,
+      "lastAccessed": 1771679616269,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/routes/ai-callback.ts",
+      "accessCount": 11,
+      "lastAccessed": 1771679667721,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/services/sse-manager.ts",
+      "accessCount": 8,
+      "lastAccessed": 1771679150558,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/services/diff-service.ts",
+      "accessCount": 7,
+      "lastAccessed": 1771679136424,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/services/ai-trigger.ts",
+      "accessCount": 7,
+      "lastAccessed": 1771679400602,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/routes/pages.ts",
+      "accessCount": 7,
+      "lastAccessed": 1771679401662,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/lib/db/seed.ts",
+      "accessCount": 6,
+      "lastAccessed": 1771678213514,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/services/page-service.ts",
+      "accessCount": 6,
+      "lastAccessed": 1771679134281,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/package.json",
+      "accessCount": 6,
+      "lastAccessed": 1771679404893,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/services/callback.py",
+      "accessCount": 6,
+      "lastAccessed": 1771679573742,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/index.ts",
+      "accessCount": 5,
+      "lastAccessed": 1771678877340,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/jobs/recluster.py",
+      "accessCount": 4,
+      "lastAccessed": 1771678127675,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/jobs/report.py",
+      "accessCount": 4,
+      "lastAccessed": 1771678131425,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/drizzle/0000_dear_lyja.sql",
+      "accessCount": 4,
+      "lastAccessed": 1771678218858,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/routes/reports.ts",
+      "accessCount": 4,
+      "lastAccessed": 1771678219470,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/lib/db/index.ts",
+      "accessCount": 4,
+      "lastAccessed": 1771678877366,
+      "type": "file"
+    },
+    {
+      "path": "docker-compose.yml",
+      "accessCount": 4,
+      "lastAccessed": 1771679100658,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/routes/sse.ts",
+      "accessCount": 4,
+      "lastAccessed": 1771679161587,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/routers/process.py",
+      "accessCount": 4,
+      "lastAccessed": 1771679566651,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/main.py",
+      "accessCount": 4,
+      "lastAccessed": 1771679586312,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/services/clustering.py",
+      "accessCount": 3,
+      "lastAccessed": 1771678007970,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/drizzle/meta/_journal.json",
+      "accessCount": 3,
+      "lastAccessed": 1771678227606,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/drizzle.config.ts",
+      "accessCount": 3,
+      "lastAccessed": 1771678228121,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/jobs/scheduler.py",
+      "accessCount": 2,
+      "lastAccessed": 1771677886730,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/routers/cluster.py",
+      "accessCount": 2,
+      "lastAccessed": 1771677889158,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/routers/report.py",
+      "accessCount": 2,
+      "lastAccessed": 1771677889587,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/routers/project.py",
+      "accessCount": 2,
+      "lastAccessed": 1771677894528,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/pyproject.toml",
+      "accessCount": 2,
+      "lastAccessed": 1771677895993,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/hooks/use-sse.ts",
+      "accessCount": 2,
+      "lastAccessed": 1771678873027,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/services/keyword.py",
+      "accessCount": 2,
+      "lastAccessed": 1771679477878,
+      "type": "file"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 1,
+      "lastAccessed": 1771677342675,
+      "type": "file"
+    },
+    {
+      "path": "HANDOFF.md",
+      "accessCount": 1,
+      "lastAccessed": 1771677351018,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/routes/search.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677355054,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/routes/projects.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677355263,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/services/project-service.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677360550,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/services/database-service.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677360995,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/services/embedding.py",
+      "accessCount": 1,
+      "lastAccessed": 1771677369968,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/services/summarizer.py",
+      "accessCount": 1,
+      "lastAccessed": 1771677370843,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/routes/databases.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677375225,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/server/routes/files.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677375895,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/app/(workspace)/dashboard/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1771677376459,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/app/(workspace)/projects/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1771677376953,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/components/editor/block-editor-inner.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1771677384656,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/app/(workspace)/projects/[id]/project-detail-client.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1771677385308,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/hooks/use-debounce-save.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677386326,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/components/layout/sidebar.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1771677391195,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/lib/auth.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677392678,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/app/(workspace)/pages/[id]/page-client.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1771677396534,
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src/components/editor/database-block/types.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771677397200,
+      "type": "file"
+    },
+    {
+      "path": "apps/ai/src/routers/embed.py",
+      "accessCount": 1,
+      "lastAccessed": 1771677895007,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

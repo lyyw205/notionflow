@@ -57,6 +57,7 @@ export const pages = sqliteTable("pages", {
   content: text("content").notNull(),
   plainText: text("plain_text").notNull(),
   summary: text("summary"),
+  noteType: text("note_type"),
   categoryId: text("category_id").references(() => categories.id),
   authorId: text("author_id")
     .notNull()
@@ -125,6 +126,77 @@ export const files = sqliteTable("files", {
   uploadedBy: text("uploaded_by")
     .notNull()
     .references(() => users.id),
+  createdAt: integer("created_at").notNull(),
+});
+
+export const pageEntities = sqliteTable("page_entities", {
+  id: text("id").primaryKey(),
+  pageId: text("page_id")
+    .notNull()
+    .references(() => pages.id),
+  entityType: text("entity_type").notNull(),
+  value: text("value").notNull(),
+  metadata: text("metadata"),
+  createdAt: integer("created_at").notNull(),
+});
+
+export const tasks = sqliteTable("tasks", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  status: text("status").notNull().default("todo"),
+  priority: text("priority").default("medium"),
+  dueDate: integer("due_date"),
+  sourcePageId: text("source_page_id").references(() => pages.id),
+  projectId: text("project_id").references(() => projects.id),
+  milestoneId: text("milestone_id").references(() => milestones.id),
+  assignee: text("assignee"),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const notifications = sqliteTable("notifications", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  type: text("type").notNull(),
+  title: text("title").notNull(),
+  body: text("body"),
+  link: text("link"),
+  isRead: integer("is_read").notNull().default(0),
+  createdAt: integer("created_at").notNull(),
+});
+
+export const projectState = sqliteTable("project_state", {
+  id: text("id").primaryKey(),
+  projectId: text("project_id")
+    .notNull()
+    .unique()
+    .references(() => projects.id),
+  goal: text("goal"),
+  openTasksCount: integer("open_tasks_count").notNull().default(0),
+  completedTasksCount: integer("completed_tasks_count").notNull().default(0),
+  blockers: text("blockers"),
+  healthScore: integer("health_score"),
+  lastActivity: integer("last_activity"),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const aiSuggestions = sqliteTable("ai_suggestions", {
+  id: text("id").primaryKey(),
+  type: text("type").notNull(),
+  pageId: text("page_id").references(() => pages.id),
+  payload: text("payload").notNull(),
+  confidence: real("confidence"),
+  status: text("status").notNull().default("pending"),
+  reviewedAt: integer("reviewed_at"),
+  createdAt: integer("created_at").notNull(),
+});
+
+export const pageEvents = sqliteTable("page_events", {
+  id: text("id").primaryKey(),
+  eventType: text("event_type").notNull(),
+  payload: text("payload").notNull(),
   createdAt: integer("created_at").notNull(),
 });
 
@@ -204,6 +276,31 @@ export const embeddingsRelations = relations(embeddings, ({ one }) => ({
 export const filesRelations = relations(files, ({ one }) => ({
   page: one(pages, { fields: [files.pageId], references: [pages.id] }),
   uploader: one(users, { fields: [files.uploadedBy], references: [users.id] }),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, { fields: [notifications.userId], references: [users.id] }),
+}));
+
+export const projectStateRelations = relations(projectState, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectState.projectId],
+    references: [projects.id],
+  }),
+}));
+
+export const aiSuggestionsRelations = relations(aiSuggestions, ({ one }) => ({
+  page: one(pages, { fields: [aiSuggestions.pageId], references: [pages.id] }),
+}));
+
+export const pageEntitiesRelations = relations(pageEntities, ({ one }) => ({
+  page: one(pages, { fields: [pageEntities.pageId], references: [pages.id] }),
+}));
+
+export const tasksRelations = relations(tasks, ({ one }) => ({
+  sourcePage: one(pages, { fields: [tasks.sourcePageId], references: [pages.id] }),
+  project: one(projects, { fields: [tasks.projectId], references: [projects.id] }),
+  milestone: one(milestones, { fields: [tasks.milestoneId], references: [milestones.id] }),
 }));
 
 // === Database (inline database) tables ===

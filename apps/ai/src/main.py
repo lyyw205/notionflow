@@ -10,7 +10,12 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from src.jobs.scheduler import start_scheduler
 from src.routers import cluster, embed, process, project, report, summarize, tag
 from src.services.callback import CallbackService
+from src.services.classifier import ClassifierService
 from src.services.clustering import ClusteringService
+from src.services.entity_extractor import EntityExtractor
+from src.services.project_matcher import ProjectMatcher
+from src.services.status_detector import StatusDetector
+from src.services.todo_extractor import TodoExtractor
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,6 +38,16 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     app.state.clustering_service = ClusteringService()
     app.state.callback_service = CallbackService()
+
+    # Phase 2: New services
+    app.state.classifier_service = ClassifierService(app.state.sbert_model)
+    app.state.entity_extractor = EntityExtractor()
+    app.state.todo_extractor = TodoExtractor()
+
+    # Phase 3+4: Project matching and status detection
+    app.state.project_matcher = ProjectMatcher()
+    app.state.status_detector = StatusDetector()
+
     app.state.models_loaded = True
 
     logger.info("All models loaded successfully")
@@ -48,7 +63,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title="NotionFlow AI",
-    version="0.1.0",
+    version="0.2.0",
     lifespan=lifespan,
 )
 

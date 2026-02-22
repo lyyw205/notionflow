@@ -24,6 +24,7 @@
     "@mantine/hooks": "^8.3.14",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^11.6.0",
+    "bullmq": "^5.70.0",
     "date-fns": "^4.1.0",
     "diff": "^7.0.0",
     "drizzle-orm": "^0.36.0",

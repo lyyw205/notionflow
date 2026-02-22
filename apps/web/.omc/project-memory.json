@@ -1,0 +1,231 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1771678612408,
+  "projectRoot": "/home/youngwoo/repos/notionflow/apps/web",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "14.2.0",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "18.3.0",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "18.3.0",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "db:generate": "drizzle-kit generate",
+      "db:migrate": "drizzle-kit migrate",
+      "db:seed": "tsx src/lib/db/seed.ts"
+    }
+  },
+  "conventions": {
+    "namingStyle": "camelCase",
+    "importStyle": "ES modules",
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "drizzle": {
+      "path": "drizzle",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1771678612389,
+      "keyFiles": [
+        "0000_dear_lyja.sql",
+        "0001_fat_sunset_bain.sql"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1771678612390,
+      "keyFiles": [
+        "middleware.ts"
+      ]
+    },
+    "src/app": {
+      "path": "src/app",
+      "purpose": "Application code",
+      "fileCount": 3,
+      "lastAccessed": 1771678612404,
+      "keyFiles": [
+        "globals.css",
+        "layout.tsx",
+        "page.tsx"
+      ]
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 1,
+      "lastAccessed": 1771678612405,
+      "keyFiles": [
+        "providers.tsx"
+      ]
+    },
+    "src/lib": {
+      "path": "src/lib",
+      "purpose": "Library code",
+      "fileCount": 1,
+      "lastAccessed": 1771678612405,
+      "keyFiles": [
+        "auth.ts"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/server/routes/ai-callback.ts",
+      "accessCount": 6,
+      "lastAccessed": 1771750227314,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/db/schema.ts",
+      "accessCount": 3,
+      "lastAccessed": 1771750130175,
+      "type": "file"
+    },
+    {
+      "path": "drizzle/meta/_journal.json",
+      "accessCount": 3,
+      "lastAccessed": 1771750238305,
+      "type": "file"
+    },
+    {
+      "path": "src/server/services/queue.ts",
+      "accessCount": 2,
+      "lastAccessed": 1771679353647,
+      "type": "file"
+    },
+    {
+      "path": "src/server/routes/search.ts",
+      "accessCount": 2,
+      "lastAccessed": 1771750007261,
+      "type": "file"
+    },
+    {
+      "path": "src/server/services/search-service.ts",
+      "accessCount": 2,
+      "lastAccessed": 1771750129170,
+      "type": "file"
+    },
+    {
+      "path": "src/server/routes/tasks.ts",
+      "accessCount": 2,
+      "lastAccessed": 1771750136382,
+      "type": "file"
+    },
+    {
+      "path": "src/server/services/notification-service.ts",
+      "accessCount": 2,
+      "lastAccessed": 1771750137527,
+      "type": "file"
+    },
+    {
+      "path": "drizzle.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771679201463,
+      "type": "file"
+    },
+    {
+      "path": "next.config.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1771679280997,
+      "type": "file"
+    },
+    {
+      "path": "src/server/services/ai-trigger.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771679360105,
+      "type": "file"
+    },
+    {
+      "path": "drizzle/0003_big_iceman.sql",
+      "accessCount": 1,
+      "lastAccessed": 1771679678070,
+      "type": "file"
+    },
+    {
+      "path": "src/server/routes/projects.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771749898593,
+      "type": "file"
+    },
+    {
+      "path": "src/server/routes/notifications.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771749995454,
+      "type": "file"
+    },
+    {
+      "path": "src/server/index.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771750014340,
+      "type": "file"
+    },
+    {
+      "path": "drizzle/0006_fts5_pages.sql",
+      "accessCount": 1,
+      "lastAccessed": 1771750148742,
+      "type": "file"
+    },
+    {
+      "path": "src/server/services/suggestion-service.ts",
+      "accessCount": 1,
+      "lastAccessed": 1771750222379,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

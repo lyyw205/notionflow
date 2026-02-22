@@ -1,6 +1,14 @@
 version: "3.9"
 
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - notionflow-net
+
   web:
     build: ./apps/web
     ports:
@@ -11,12 +19,14 @@ services:
       YJS_WEBSOCKET_URL: ws://yjs:1234
       DATABASE_URL: file:/data/notionflow.db
       WEB_CALLBACK_URL: http://web:3000/api
+      REDIS_URL: redis://redis:6379
     volumes:
       - db-data:/data
       - upload-data:/app/uploads
     depends_on:
       - ai
       - yjs
+      - redis
     restart: unless-stopped
     networks:
       - notionflow-net

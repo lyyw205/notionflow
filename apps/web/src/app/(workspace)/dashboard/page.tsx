@@ -7,6 +7,7 @@ import { CategoryTree } from "@/components/dashboard/category-tree";
 import { TagCloud } from "@/components/dashboard/tag-cloud";
 import { Header } from "@/components/layout/header";
 import { useSSE } from "@/hooks/use-sse";
+import { SuggestionPanel } from "@/components/suggestions/suggestion-panel";
 
 interface PageFromAPI {
   id: string;
@@ -163,6 +164,7 @@ export default function DashboardPage() {
     <>
       <Header />
       <div className="flex-1 overflow-y-auto p-6">
+        <SuggestionPanel />
         <StatsCards stats={data.stats} />
 
         <div className="mt-6 grid grid-cols-3 gap-6">

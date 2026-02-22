@@ -1,7 +1,9 @@
 import { Hono } from "hono";
-import { db } from "@/lib/db";
-import { pages, categories, pageTags, tags } from "@/lib/db/schema";
-import { like, eq, desc } from "drizzle-orm";
+import {
+  keywordSearch,
+  semanticSearch,
+  hybridSearch,
+} from "../services/search-service";
 
 const app = new Hono();
 
@@ -11,46 +13,32 @@ app.get("/", async (c) => {
     return c.json({ error: "Query parameter 'q' is required" }, 400);
   }
 
-  const searchPattern = `%${q}%`;
+  const mode = c.req.query("mode") || "hybrid";
+  const page = parseInt(c.req.query("page") || "1", 10);
+  const limit = Math.min(parseInt(c.req.query("limit") || "20", 10), 50);
+  const offset = (page - 1) * limit;
 
-  const matchedPages = db
-    .select()
-    .from(pages)
-    .where(like(pages.plainText, searchPattern))
-    .orderBy(desc(pages.updatedAt))
-    .all();
-
-  const results = [];
-  for (const page of matchedPages) {
-    const category = page.categoryId
-      ? db
-          .select()
-          .from(categories)
-          .where(eq(categories.id, page.categoryId))
-          .get()
-      : null;
-
-    const pageTagRows = db
-      .select()
-      .from(pageTags)
-      .innerJoin(tags, eq(pageTags.tagId, tags.id))
-      .where(eq(pageTags.pageId, page.id))
-      .all();
-
-    results.push({
-      id: page.id,
-      title: page.title,
-      summary: page.summary,
-      category: category ? { id: category.id, name: category.name } : null,
-      tags: pageTagRows.map((row) => ({
-        id: row.tags.id,
-        name: row.tags.name,
-      })),
-      updatedAt: page.updatedAt,
-    });
+  let results;
+  switch (mode) {
+    case "keyword":
+      results = await keywordSearch(q, limit, offset);
+      break;
+    case "semantic":
+      results = await semanticSearch(q, limit);
+      break;
+    case "hybrid":
+    default:
+      results = await hybridSearch(q, limit, offset);
+      break;
   }
 
-  return c.json(results);
+  return c.json({
+    results,
+    page,
+    limit,
+    mode,
+    total: results.length,
+  });
 });
 
 export default app;

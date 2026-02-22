@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"pnpm --filter web add bullmq ioredis && pnpm --filter web add -D @types/ioredis\",\"timeout\":60000,\"description\":\"Install bullmq and ioredis dependencies\"}",
+  "error": "Exit code 127\n/bin/bash: line 1: pnpm: command not found\n\n/bin/bash: line 1: pnpm: command not found",
+  "timestamp": "2026-02-21T13:06:05.992Z",
+  "retry_count": 1
+}

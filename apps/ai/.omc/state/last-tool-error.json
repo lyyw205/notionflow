@@ -1,0 +1,7 @@
+{
+  "tool_name": "Read",
+  "tool_input_preview": "{\"file_path\":\"/home/youngwoo/repos/notionflow/README.md\"}",
+  "error": "File does not exist. Note: your current working directory is /home/youngwoo/repos/notionflow/apps/ai.",
+  "timestamp": "2026-02-22T09:19:44.818Z",
+  "retry_count": 1
+}

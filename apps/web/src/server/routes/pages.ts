@@ -9,6 +9,7 @@ import {
   listPages,
 } from "../services/page-service";
 import { triggerAIProcessing, triggerProjectAnalysis } from "../services/ai-trigger";
+import { isSignificantChange } from "../services/diff-service";
 
 const AUTH_SECRET = process.env.AUTH_SECRET || "notionflow-dev-secret-change-in-production";
 
@@ -74,9 +75,11 @@ app.put("/:id", async (c) => {
     return c.json({ error: "Page not found" }, 404);
   }
 
-  // Trigger AI processing asynchronously
+  // Trigger AI processing only if change is significant (>= 3 lines diff)
   if (parsed.data.content && result.plainText) {
-    triggerAIProcessing(id, result.plainText);
+    if (isSignificantChange(result.previousPlainText || "", result.plainText)) {
+      triggerAIProcessing(id, result.plainText);
+    }
   }
 
   // Trigger project analysis if page belongs to a project

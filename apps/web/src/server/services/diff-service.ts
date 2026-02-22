@@ -10,6 +10,15 @@ export interface DiffResult {
   totalRemoved: number;
 }
 
+export function isSignificantChange(
+  oldText: string,
+  newText: string,
+  threshold = 3
+): boolean {
+  const diff = computeDiff(oldText, newText);
+  return diff.totalAdded + diff.totalRemoved >= threshold;
+}
+
 export function computeDiff(oldText: string, newText: string): DiffResult {
   const changes: Change[] = diffLines(oldText, newText);
 
